@@ -38,9 +38,6 @@
     "react": "0.14.6"
   },
   "peerDependencies": {
-    "ag-grid": "4.0.x"
-  },
-  "dependencies": {
     "ag-grid": "github:k2data/ag-grid@4.0.x"
   }
 }
