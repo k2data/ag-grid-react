@@ -1,2 +1,5 @@
-// ag-grid-react v5.0.0
-export declare function reactFilterFactory(reactComponent: any): Function;
+// ag-grid-react v6.3.0
+import { IFilter } from "ag-grid";
+export declare function reactFilterFactory(reactComponent: any, parentComponent?: any): {
+    new (): IFilter;
+};

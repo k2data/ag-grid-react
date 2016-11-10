@@ -1,5 +1,7 @@
 /// <reference path="../typings/tsd"/>
 
+import {ReactFrameworkFactory} from './reactFrameworkFactory';
+
 var React = require('react');
 var ReactDOM = require('react-dom');
 var AgGrid = require('ag-grid');
@@ -8,35 +10,34 @@ export var AgGridReact = React.createClass({
 
     render: function() {
         return React.DOM.div({
-            style: {height: '100%'}
+            style: this.createStyleForDiv()
         });
     },
 
+    createStyleForDiv: function() {
+        var style: any = {height: '100%'};
+        // allow user to override styles
+        var containerStyle = this.props.containerStyle;
+        if (containerStyle) {
+            Object.keys(containerStyle).forEach( key => {
+                var value = containerStyle[key];
+                style[key] = value;
+            });
+        }
+        return style;
+    },
+
     componentDidMount: function() {
+        var reactFrameworkFactory = new ReactFrameworkFactory(this);
+        var gridParams = {frameworkFactory: reactFrameworkFactory};
+
         var domNode = ReactDOM.findDOMNode(this);
+
         this.gridOptions = AgGrid.ComponentUtil.copyAttributesToGridOptions(this.props.gridOptions, this.props);
-        new AgGrid.Grid(domNode, this.gridOptions);
+        new AgGrid.Grid(domNode, this.gridOptions, gridParams);
 
         this.api = this.gridOptions.api;
         this.columnApi = this.gridOptions.columnApi;
-    },
-
-    getCallbackForEvent: function(eventName: string) {
-        if (!eventName || eventName.length < 2) {
-            return eventName;
-        } else {
-            return 'on' + eventName[0].toUpperCase() + eventName.substr(1);
-        }
-    },
-
-    // duplicated, taken from gridOptionsWrapper
-    globalEventListener: function(eventName: string, event: any) {
-        var callbackMethodName = this.getCallbackForEvent(eventName);
-        var callbackFromProps = this.props[callbackMethodName];
-        if (callbackFromProps) {
-            callbackFromProps(event);
-        }
-
     },
 
     shouldComponentUpdate: function() {
